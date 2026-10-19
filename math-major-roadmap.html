@@ -4,7 +4,7 @@
 #math-wiki .mw-logo {display:block;width:90px;height:auto;flex:0 0 90px;}
 @media(max-width:1200px){#math-wiki .mw-brand{align-self:flex-start;}}
 @media(max-width:600px){#math-wiki .mw-logo{width:70px;flex-basis:70px;}#math-wiki .mw-brand{font-size:23px;}}
-</style><link rel="stylesheet" href="roadmap.css?v=20261019-honors-1">
+</style><link rel="stylesheet" href="roadmap.css?v=20261019-custom-1">
 <script id="roadmap-startup-check">
 document.addEventListener("DOMContentLoaded", function () {
   var editor = document.getElementById("roadmap-editor");
@@ -12,13 +12,13 @@ document.addEventListener("DOMContentLoaded", function () {
   var fallback = document.getElementById("roadmap-fallback");
   fallback.textContent = "The course map could not be loaded. ";
   var retry = document.createElement("a");
-  retry.href = "math-major-roadmap.html?preview=20261019-honors-1";
+  retry.href = "math-major-roadmap.html?preview=20261019-custom-1";
   retry.textContent = "Reload the roadmap";
   fallback.appendChild(retry);
 });
 </script>
-<script src="roadmap-state.js?v=20261019-honors-1" defer></script>
-<script src="roadmap.js?v=20261019-honors-1" defer></script>
+<script src="roadmap-state.js?v=20261019-custom-1" defer></script>
+<script src="roadmap.js?v=20261019-custom-1" defer></script>
 </head><body><style>
 #math-wiki {font:400 16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#111;background:#fdfdfd;min-height:70vh;}
 #math-wiki * {box-sizing:border-box;}
@@ -91,6 +91,12 @@ document.addEventListener("DOMContentLoaded", function () {
         <h2 id="roadmap-bank-heading">Recommended courses</h2>
         <p class="roadmap-bank-intro">Choose courses that fit your interests.</p>
         <a class="roadmap-jump" href="#roadmap-board">Go to your course map</a>
+        <form id="roadmap-custom-form" class="roadmap-custom-form" novalidate>
+          <label for="roadmap-custom-course">Add a custom course</label>
+          <div class="roadmap-custom-entry"><input id="roadmap-custom-course" type="text" maxlength="20" autocomplete="off" placeholder="MATH 4720 or CS 2110" aria-describedby="roadmap-custom-help roadmap-custom-error"><button type="submit">Add course</button></div>
+          <p id="roadmap-custom-help">Enter any subject and four-digit course number. A number alone means MATH. Course details link to the wiki or Cornell catalog.</p>
+          <p id="roadmap-custom-error" class="roadmap-node-error" hidden></p>
+        </form>
         <div id="roadmap-recommendations" class="roadmap-bank-scroll" tabindex="0" role="region" aria-label="Course recommendations"></div>
       </aside>
       <section id="roadmap-board" class="roadmap-board" aria-labelledby="roadmap-board-heading" tabindex="-1">

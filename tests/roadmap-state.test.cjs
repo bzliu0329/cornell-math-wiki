@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { emptyTerms, normalizeCourse, placeCourse, readPlan, recommendedTerms } = require('../roadmap-state.js');
+const { emptyTerms, normalizeCourse, courseLabel, courseDetails, placeCourse, readPlan, recommendedTerms } = require('../roadmap-state.js');
 
 test('a new roadmap is empty with independent nodes across eight semesters', () => {
   const terms = emptyTerms();
@@ -10,11 +10,16 @@ test('a new roadmap is empty with independent nodes across eight semesters', () 
   assert.equal(terms[1][0], '');
 });
 
-test('course input accepts a number or MATH prefix and rejects malformed entries', () => {
+test('course input accepts subject codes and defaults bare numbers to MATH and rejects malformed entries', () => {
   assert.equal(normalizeCourse('  MATH 4710 '), '4710');
   assert.equal(normalizeCourse('4250'), '4250');
   assert.equal(normalizeCourse(''), '');
-  for (const raw of ['471', '47100', 'CS 4710', '<img>', null]) assert.equal(normalizeCourse(raw), null);
+  assert.equal(normalizeCourse('cs2110'), 'CS 2110');
+  assert.equal(normalizeCourse('ECON-3030'), 'ECON 3030');
+  assert.equal(normalizeCourse('orie 3500'), 'ORIE 3500');
+  assert.equal(courseLabel('4720'), 'MATH 4720');
+  assert.equal(courseLabel('cs2110'), 'CS 2110');
+  for (const raw of ['471', '47100', '<img>', 'CS 2110/extra', 'javascript:2110', null]) assert.equal(normalizeCourse(raw), null);
 });
 
 test('placing a recommendation fills only the chosen node without mutating the old plan', () => {
@@ -54,7 +59,7 @@ test('saved plans retain custom nodes and reject corrupt or unbounded data', () 
   const terms = emptyTerms();
   terms[2].push('9999');
   const raw = JSON.stringify({ version: 1, terms, filters: { concentration: 'cs' } });
-  assert.deepEqual(readPlan(raw), { terms, filters: { concentration: 'cs' } });
+  assert.deepEqual(readPlan(raw), { terms, filters: { concentration: 'cs' }, customCourses: [] });
   for (const invalid of ['bad json', 'null', '{}', JSON.stringify({version:1, terms:[['4710']]})]) {
     assert.equal(readPlan(invalid), null);
   }
@@ -108,4 +113,38 @@ test('concentrations and graduate preferences produce distinct plans without sha
   assert.ok(recommendedTerms({ ...options, graduate: true }).flat().includes('4340'));
   math[0][0] = '9999';
   assert.notEqual(recommendedTerms(options)[0][0], '9999');
+});
+
+
+test('custom subjects move and swap without losing their subject codes', () => {
+  const terms = emptyTerms();
+  terms[0][0] = 'CS 2110';
+  terms[1][0] = 'ECON 3030';
+  const result = placeCourse(terms, {term:1,node:0}, 'CS 2110', {term:0,node:0});
+  assert.ok(result.swapped);
+  assert.equal(result.terms[0][0], 'ECON 3030');
+  assert.equal(result.terms[1][0], 'CS 2110');
+});
+
+test('saved custom courses normalize, deduplicate, and exclude invalid entries', () => {
+  const terms = emptyTerms();
+  terms[0][0] = 'cs2110';
+  terms[0][1] = 'MATH 4720';
+  const saved = readPlan(JSON.stringify({version:1, terms,
+    customCourses:['cs2110','CS 2110','MATH 4720','ECON 3030','<script>','',null]}));
+  assert.deepEqual(saved.customCourses, ['CS 2110','4720','ECON 3030']);
+  assert.deepEqual(saved.terms[0], ['CS 2110','4720']);
+  terms[0][0] = '<img>';
+  assert.equal(readPlan(JSON.stringify({version:1,terms})), null);
+});
+
+test('course details use known wiki pages or a safely encoded Cornell catalog lookup', () => {
+  const catalog = {'CS 2110': {title:'Object-Oriented Programming', href:'cs-2110.html'}};
+  assert.deepEqual(courseDetails('cs2110',catalog), {
+    label:'CS 2110',title:'Object-Oriented Programming',href:'cs-2110.html'});
+  assert.equal(courseDetails('ECON 3030',catalog).href,
+    'https://catalog.cornell.edu/search/?P=ECON%203030');
+  assert.equal(courseDetails('4720').href,
+    'https://catalog.cornell.edu/search/?P=MATH%204720');
+  assert.equal(courseDetails('javascript:alert(1)'), null);
 });

@@ -1,22 +1,141 @@
 /* Course recommendations from mathwiiki website.txt. */
 (() => {
 "use strict";
-  const titles = {
-    2210: "Linear Algebra", 2220: "Multivariable Calculus",
-    2230: "Theoretical Linear Algebra and Vector Calculus I",
-    2240: "Theoretical Linear Algebra and Calculus", 3040: "Prove It!",
-    3110: "Introduction to Analysis", 3210: "Manifolds and Differential Forms",
-    3270: "Introduction to Ordinary Differential Equations", 3320: "Introduction to Number Theory",
-    3340: "Abstract Algebra", 3360: "Applicable Algebra", 3610: "Mathematical Modeling",
-    4040: "Patterns, Proofs, and Problems", 4130: "Honors Introduction to Analysis I",
-    4140: "Honors Introduction to Analysis II", 4180: "Complex Analysis",
-    4200: "Differential Equations and Dynamical Systems", 4210: "Nonlinear Dynamics and Chaos",
-    4250: "Numerical Analysis and Differential Equations", 4260: "Numerical Analysis: Linear and Nonlinear Problems",
-    4280: "Introduction to Partial Differential Equations", 4310: "Linear Algebra",
-    4330: "Honors Linear Algebra", 4340: "Honors Introduction to Algebra", 4370: "Computational Algebra",
-    4410: "Introduction to Combinatorics I", 4500: "Matrix Groups", 4530: "Introduction to Topology",
-    4540: "Introduction to Differential Geometry", 4710: "Basic Probability",
-    4740: "Stochastic Processes", 4810: "Mathematical Logic"
+  // Course names and destinations from the existing wiki course pages.
+  const catalog = {
+    "CS 1110": {"title": "Introduction to Computing: A Design and Development Perspective", "href": "cs-1110.html"},
+    "CS 2110": {"title": "Object-Oriented Programming and Data Structures", "href": "cs-2110.html"},
+    "CS 2800": {"title": "Mathematical Foundations of Computing", "href": "cs-2800.html"},
+    "CS 3110": {"title": "Functional Programming and Data Structures", "href": "cs-3110.html"},
+    "CS 3410": {"title": "Computer System Organization and Programming", "href": "cs-3410.html"},
+    "CS 4220": {"title": "Numerical Analysis: Linear and Nonlinear Problems", "href": "cs-4220.html"},
+    "CS 4782": {"title": "Introduction to Deep Learning", "href": "cs-4782.html"},
+    "CS 4820": {"title": "Introduction to Analysis of Algorithms", "href": "cs-4820.html"},
+    "MATH 1006": {"title": "Academic Support for MATH 1106", "href": "math-1006.html"},
+    "MATH 1011": {"title": "Academic Support for MATH 1110", "href": "math-1011.html"},
+    "MATH 1012": {"title": "Academic Support for MATH 1120", "href": "math-1012.html"},
+    "MATH 1021": {"title": "Academic Support for MATH 2210", "href": "math-1021.html"},
+    "MATH 1101": {"title": "Calculus Preparation", "href": "math-1101.html"},
+    "MATH 1105": {"title": "Finite Mathematics for the Life and Social Sciences", "href": "math-1105.html"},
+    "MATH 1106": {"title": "Modeling with Calculus for the Life Sciences", "href": "math-1106.html"},
+    "MATH 1110": {"title": "Calculus I", "href": "math-1110.html"},
+    "MATH 1120": {"title": "Calculus II", "href": "math-1120.html"},
+    "MATH 1300": {"title": "Mathematical Explorations", "href": "math-1300.html"},
+    "MATH 1340": {"title": "Strategy, Cooperation, and Conflict", "href": "math-1340.html"},
+    "MATH 1710": {"title": "Statistical Theory and Application in the Real World", "href": "math-1710.html"},
+    "MATH 1900": {"title": "Introduction to Calculus For Engineers", "href": "math-1900.html"},
+    "MATH 1910": {"title": "Calculus for Engineers", "href": "math-1910.html"},
+    "MATH 1920": {"title": "Multivariable Calculus for Engineers", "href": "math-1920.html"},
+    "MATH 2210": {"title": "Linear Algebra", "href": "math-2210.html"},
+    "MATH 2220": {"title": "Multivariable Calculus", "href": "math-2220.html"},
+    "MATH 2230": {"title": "Theoretical Linear Algebra and Vector Calculus I", "href": "math-2230.html"},
+    "MATH 2240": {"title": "Theoretical Linear Algebra and Calculus", "href": "math-2240.html"},
+    "MATH 2310": {"title": "Linear Algebra for Data Science", "href": "math-2310.html"},
+    "MATH 2930": {"title": "Differential Equations for Engineers", "href": "math-2930.html"},
+    "MATH 2940": {"title": "Linear Algebra for Engineers", "href": "math-2940.html"},
+    "MATH 3040": {"title": "Prove It!", "href": "math-3040.html"},
+    "MATH 3110": {"title": "Introduction to Analysis", "href": "math-3110.html"},
+    "MATH 3210": {"title": "Manifolds and Differential Forms", "href": "math-3210.html"},
+    "MATH 3270": {"title": "Introduction to Ordinary Differential Equations", "href": "math-3270.html"},
+    "MATH 3320": {"title": "Introduction to Number Theory", "href": "math-3320.html"},
+    "MATH 3340": {"title": "Abstract Algebra", "href": "math-3340.html"},
+    "MATH 3360": {"title": "Applicable Algebra", "href": "math-3360.html"},
+    "MATH 3610": {"title": "Mathematical Modeling", "href": "math-3610.html"},
+    "MATH 3810": {"title": "Deductive Logic", "href": "math-3810.html"},
+    "MATH 3840": {"title": "Introduction to Set Theory", "href": "math-3840.html"},
+    "MATH 3850": {"title": "Modal Logic", "href": "math-3850.html"},
+    "MATH 4030": {"title": "History of Mathematics", "href": "math-4030.html"},
+    "MATH 4040": {"title": "Patterns, Proofs, and Problems", "href": "math-4040.html"},
+    "MATH 4130": {"title": "Honors Introduction to Analysis I", "href": "math-4130.html"},
+    "MATH 4140": {"title": "Honors Introduction to Analysis II", "href": "math-4140.html"},
+    "MATH 4180": {"title": "Complex Analysis", "href": "math-4180.html"},
+    "MATH 4200": {"title": "Differential Equations and Dynamical Systems", "href": "math-4200.html"},
+    "MATH 4210": {"title": "Nonlinear Dynamics and Chaos", "href": "math-4210.html"},
+    "MATH 4220": {"title": "Applied Complex Analysis", "href": "math-4220.html"},
+    "MATH 4250": {"title": "Numerical Analysis and Differential Equations", "href": "math-4250.html"},
+    "MATH 4260": {"title": "Numerical Analysis: Linear and Nonlinear Problems", "href": "math-4260.html"},
+    "MATH 4280": {"title": "Introduction to Partial Differential Equations", "href": "math-4280.html"},
+    "MATH 4310": {"title": "Linear Algebra", "href": "math-4310.html"},
+    "MATH 4330": {"title": "Honors Linear Algebra", "href": "math-4330.html"},
+    "MATH 4340": {"title": "Honors Introduction to Algebra", "href": "math-4340.html"},
+    "MATH 4370": {"title": "Computational Algebra", "href": "math-4370.html"},
+    "MATH 4410": {"title": "Introduction to Combinatorics I", "href": "math-4410.html"},
+    "MATH 4420": {"title": "Introduction to Combinatorics II", "href": "math-4420.html"},
+    "MATH 4430": {"title": "Introduction to Algebraic Combinatorics (NEW)", "href": "math-4430.html"},
+    "MATH 4500": {"title": "Matrix Groups", "href": "math-4500.html"},
+    "MATH 4520": {"title": "Classical Geometries and Modern Applications", "href": "math-4520.html"},
+    "MATH 4530": {"title": "Introduction to Topology", "href": "math-4530.html"},
+    "MATH 4540": {"title": "Introduction to Differential Geometry", "href": "math-4540.html"},
+    "MATH 4710": {"title": "Basic Probability", "href": "math-4710.html"},
+    "MATH 4720": {"title": "Theory of Statistics", "href": "math-4720.html"},
+    "MATH 4740": {"title": "Stochastic Processes", "href": "math-4740.html"},
+    "MATH 4810": {"title": "Mathematical Logic", "href": "math-4810.html"},
+    "MATH 4820": {"title": "Topics in Logic and the Foundations of Mathematics", "href": "math-4820.html"},
+    "MATH 4860": {"title": "Applied Logic", "href": "math-4860.html"},
+    "MATH 4870": {"title": "Set Theory", "href": "math-4870.html"},
+    "MATH 4900": {"title": "Supervised Research", "href": "math-4900.html"},
+    "MATH 4901": {"title": "Supervised Reading", "href": "math-4901.html"},
+    "MATH 4980": {"title": "Special Study for Mathematics Teaching", "href": "math-4980.html"},
+    "MATH 4997": {"title": "Practical Training in Mathematics", "href": "math-4997.html"},
+    "MATH 5080": {"title": "Special Study for Teachers", "href": "math-5080.html"},
+    "MATH 5200": {"title": "Differential Equations and Dynamical Systems", "href": "math-5200.html"},
+    "MATH 5220": {"title": "Applied Complex Analysis", "href": "math-5220.html"},
+    "MATH 5250": {"title": "Numerical Analysis and Differential Equations", "href": "math-5250.html"},
+    "MATH 5410": {"title": "Introduction to Combinatorics I", "href": "math-5410.html"},
+    "MATH 5420": {"title": "Introduction to Combinatorics II", "href": "math-5420.html"},
+    "MATH 5430": {"title": "Introduction to Algebraic Combinatorics", "href": "math-5430.html"},
+    "MATH 6080": {"title": "Teaching and Learning Mathematics", "href": "math-6080.html"},
+    "MATH 6110": {"title": "Real Analysis", "href": "math-6110.html"},
+    "MATH 6120": {"title": "Complex Analysis", "href": "math-6120.html"},
+    "MATH 6150": {"title": "Partial Differential Equations", "href": "math-6150.html"},
+    "MATH 6160": {"title": "Partial Differential Equations", "href": "math-6160.html"},
+    "MATH 6210": {"title": "Measure Theory and Lebesgue Integration", "href": "math-6210.html"},
+    "MATH 6220": {"title": "Applied Functional Analysis", "href": "math-6220.html"},
+    "MATH 6230": {"title": "Differential Games and Optimal Control", "href": "math-6230.html"},
+    "MATH 6250": {"title": "Top Ten Algorithms of the 20th Century", "href": "math-6250.html"},
+    "MATH 6260": {"title": "Dynamical Systems", "href": "math-6260.html"},
+    "MATH 6270": {"title": "Applied Dynamical Systems", "href": "math-6270.html"},
+    "MATH 6280": {"title": "Complex Dynamics", "href": "math-6280.html"},
+    "MATH 6302": {"title": "Lattices: Geometry, Cryptography, and Algorithms", "href": "math-6302.html"},
+    "MATH 6310": {"title": "Algebra", "href": "math-6310.html"},
+    "MATH 6320": {"title": "Algebra", "href": "math-6320.html"},
+    "MATH 6330": {"title": "Noncommutative Algebra", "href": "math-6330.html"},
+    "MATH 6340": {"title": "Commutative Algebra with Applications in Algebraic Geometry", "href": "math-6340.html"},
+    "MATH 6350": {"title": "Homological Algebra", "href": "math-6350.html"},
+    "MATH 6370": {"title": "Algebraic Number Theory", "href": "math-6370.html"},
+    "MATH 6390": {"title": "Lie Groups and Lie Algebras", "href": "math-6390.html"},
+    "MATH 6410": {"title": "Enumerative Combinatorics", "href": "math-6410.html"},
+    "MATH 6510": {"title": "Algebraic Topology", "href": "math-6510.html"},
+    "MATH 6520": {"title": "Differentiable Manifolds", "href": "math-6520.html"},
+    "MATH 6530": {"title": "K-Theory and Characteristic Classes", "href": "math-6530.html"},
+    "MATH 6540": {"title": "Homotopy Theory", "href": "math-6540.html"},
+    "MATH 6620": {"title": "Riemannian Geometry", "href": "math-6620.html"},
+    "MATH 6630": {"title": "Symplectic Geometry", "href": "math-6630.html"},
+    "MATH 6640": {"title": "Hyperbolic Geometry", "href": "math-6640.html"},
+    "MATH 6670": {"title": "Algebraic Geometry", "href": "math-6670.html"},
+    "MATH 6710": {"title": "Probability Theory I", "href": "math-6710.html"},
+    "MATH 6720": {"title": "Probability Theory II", "href": "math-6720.html"},
+    "MATH 6730": {"title": "Mathematical Statistics I", "href": "math-6730.html"},
+    "MATH 6810": {"title": "Logic", "href": "math-6810.html"},
+    "MATH 6830": {"title": "Model Theory", "href": "math-6830.html"},
+    "MATH 6840": {"title": "Recursion Theory", "href": "math-6840.html"},
+    "MATH 6870": {"title": "Set Theory", "href": "math-6870.html"},
+    "ORIE 3300": {"title": "Optimization I", "href": "orie-3300.html"},
+    "ORIE 3310": {"title": "Optimization II", "href": "orie-3310.html"},
+    "ORIE 3500": {"title": "Eng Probability and Statistics: Modeling and Data Science II", "href": "orie-3500.html"},
+    "ORIE 3510": {"title": "Stochastic Processes for Decision-Making", "href": "orie-3510.html"},
+    "ORIE 4350": {"title": "Introduction to Game Theory", "href": "orie-4350.html"},
+    "ORIE 4580": {"title": "Simulation Modeling and Analysis", "href": "orie-4580.html"},
+    "ORIE 4600": {"title": "Introduction to Financial Engineering", "href": "orie-4600.html"},
+    "ORIE 4820": {"title": "Data-Driven Decision Modeling and Analysis", "href": "orie-4820.html"},
+    "PHYS 1112": {"title": "Physics I: Mechanics and Heat", "href": "phys-1112.html"},
+    "PHYS 1116": {"title": "Physics I: Mechanics and Special Relativity", "href": "phys-1116.html"},
+    "PHYS 2213": {"title": "Physics II: Electromagnetism", "href": "phys-2213.html"},
+    "PHYS 2217": {"title": "Physics II: Electricity and Magnetism", "href": "phys-2217.html"},
+    "PHYS 2218": {"title": "Physics III: Waves and Thermal Physics", "href": "phys-2218.html"},
+    "PHYS 3316": {"title": "Basics of Quantum Mechanics", "href": "phys-3316.html"},
+    "PHYS 3317": {"title": "Applications of Quantum Mechanics", "href": "phys-3317.html"},
+    "PHYS 3327": {"title": "Advanced Electricity and Magnetism", "href": "phys-3327.html"}
   };
 
   const suggestedMath = "An option for students less focused on graduate school.";
@@ -49,7 +168,8 @@
     [4180, "Specifically suggested for students interested in mathematics graduate study."],
     [4530, "Specifically suggested for students interested in mathematics graduate study."]
   ];
-  const { emptyTerms, normalizeCourse, placeCourse, readPlan, recommendedTerms } = window.MathRoadmapState;
+  const { emptyTerms, normalizeCourse, courseLabel, courseDetails, placeCourse, readPlan, recommendedTerms } = window.MathRoadmapState;
+  const infoFor = code => courseDetails(code, catalog);
   const storageKey = "cornell-math-roadmap-editor-v1";
   const dragType = "application/x-cornell-math-course";
   const form = document.getElementById("roadmap-form");
@@ -60,7 +180,11 @@
   const cancel = document.getElementById("roadmap-cancel");
   const undo = document.getElementById("roadmap-undo");
   const board = document.getElementById("roadmap-board");
+  const customForm = document.getElementById("roadmap-custom-form");
+  const customInput = document.getElementById("roadmap-custom-course");
+  const customError = document.getElementById("roadmap-custom-error");
   let terms = emptyTerms();
+  let customCourses = [];
   let pending = null;
   let loadFailed = false;
   let previousTerms = null;
@@ -84,6 +208,7 @@
     const saved = raw ? readPlan(raw) : null;
     if (saved) {
       terms = saved.terms;
+      customCourses = saved.customCourses;
       for (const name of ["concentration", "preparation"]) {
         const select = form.elements[name];
         if ([...select.options].some(option => option.value === saved.filters[name])) select.value = saved.filters[name];
@@ -100,7 +225,7 @@
   function save() {
     const indicator = document.getElementById("roadmap-save-status");
     try {
-      localStorage.setItem(storageKey, JSON.stringify({ version: 1, terms, filters: filters() }));
+      localStorage.setItem(storageKey, JSON.stringify({ version: 1, terms, filters: filters(), customCourses }));
       indicator.textContent = "Saved in this browser";
     } catch { indicator.textContent = "Saving unavailable — keep this tab open to retain your plan."; }
   }
@@ -109,18 +234,19 @@
     nodeViews.forEach((view, key) => {
       const [term, node] = key.split(":").map(Number);
       const code = terms[term][node];
+      const info = infoFor(code);
       const isSource = pending?.source && nodeKey(pending.source) === key;
       view.container.classList.toggle("is-filled", Boolean(code));
       view.container.classList.toggle("is-moving", Boolean(isSource));
-      if (view.input.getAttribute("aria-invalid") !== "true") view.input.value = code;
-      view.title.textContent = code ? (titles[code] || "Custom course") : "Drop a course here, or type its number";
+      if (view.input.getAttribute("aria-invalid") !== "true") view.input.value = info?.label || "";
+      view.title.textContent = info ? info.title : "Drop a course here, or type its code";
       view.move.hidden = view.clear.hidden = view.details.hidden = !code;
       view.remove.hidden = Boolean(code) || node < 2;
-      view.move.setAttribute("aria-label", `Move MATH ${code} from ${nodeName({ term, node })}`);
+      view.move.setAttribute("aria-label", `Move ${info?.label || "course"} from ${nodeName({ term, node })}`);
       view.move.setAttribute("aria-pressed", String(Boolean(isSource)));
       view.clear.setAttribute("aria-label", `Clear ${nodeName({ term, node })}`);
-      view.details.href = code && titles[code] ? `math-${code}.html` : "math-classes.html";
-      view.details.setAttribute("aria-label", `Course details for MATH ${code}`);
+      view.details.href = info?.href || "math-classes.html";
+      view.details.setAttribute("aria-label", `Course details for ${info?.label || "course"}`);
       view.place.hidden = !pending || Boolean(isSource);
       view.place.disabled = Boolean(code && !pending?.source);
       view.place.textContent = code ? "Swap here" : "Place here";
@@ -134,8 +260,8 @@
   function setPending(next) {
     pending = next;
     selection.textContent = next
-      ? `MATH ${next.code} selected. ${next.source ? "Choose another node to move or swap it." : "Choose Place here on an empty node."}`
-      : "Drag a course into a node, type its number, or select a course and choose Place here.";
+      ? `${courseLabel(next.code)} selected. ${next.source ? "Choose another node to move or swap it." : "Choose Place here on an empty node."}`
+      : "Drag a course into a node, type its code, or select a course and choose Place here.";
     cancel.hidden = !next;
     refreshNodes();
   }
@@ -157,33 +283,33 @@
     setPending(null);
     save();
     nodeViews.get(nodeKey(target)).input.focus();
-    announce(`MATH ${payload.code} ${result.swapped ? "swapped into" : "placed in"} ${nodeName(target)}.`);
+    announce(`${courseLabel(payload.code)} ${result.swapped ? "swapped into" : "placed in"} ${nodeName(target)}.`);
   }
 
   function startDrag(event, payload) {
     if (!payload.code) { event.preventDefault(); return; }
     event.dataTransfer.setData(dragType, JSON.stringify(payload));
-    event.dataTransfer.setData("text/plain", `MATH ${payload.code}`);
+    event.dataTransfer.setData("text/plain", courseLabel(payload.code));
     event.dataTransfer.effectAllowed = payload.source ? "move" : "copy";
     setPending(payload);
-    announce(`MATH ${payload.code} selected. Drop it into a node or use Place here.`);
+    announce(`${courseLabel(payload.code)} selected. Drop it into a node or use Place here.`);
   }
 
   function makeNode(target) {
     const item = element("li", "", "roadmap-node");
     const id = `course-${target.term}-${target.node}`;
-    const label = element("label", `Course number for ${nodeName(target)}`, "roadmap-sr-only");
+    const label = element("label", `Course code for ${nodeName(target)}`, "roadmap-sr-only");
     label.htmlFor = id;
     const number = element("div", "", "roadmap-node-number");
     const input = element("input");
     input.id = id;
     input.type = "text";
-    input.inputMode = "numeric";
-    input.placeholder = "Course #";
-    input.maxLength = 12;
+    input.inputMode = "text";
+    input.placeholder = "Course code";
+    input.maxLength = 20;
     input.autocomplete = "off";
     input.setAttribute("aria-describedby", `${id}-title ${id}-error`);
-    number.append(element("span", "MATH"), input);
+    number.append(input);
     const title = element("p", "", "roadmap-node-title");
     title.id = `${id}-title`;
     const error = element("p", "", "roadmap-node-error");
@@ -205,7 +331,7 @@
     function commit() {
       const code = normalizeCourse(input.value);
       if (code === null) {
-        const message = "Enter a four-digit course number, such as 4710.";
+        const message = "Enter a course code, such as MATH 4710 or CS 2110.";
         input.setAttribute("aria-invalid", "true"); input.setCustomValidity(message);
         error.textContent = message; error.hidden = false; announce(message);
         return;
@@ -215,13 +341,13 @@
       terms[target.term][target.node] = code;
       if (pending?.source && nodeKey(pending.source) === nodeKey(target)) setPending(null);
       refreshNodes(); save();
-      announce(code ? `MATH ${code} saved in ${nodeName(target)}.` : `${nodeName(target)} cleared.`);
+      announce(code ? `${courseLabel(code)} saved in ${nodeName(target)}.` : `${nodeName(target)} cleared.`);
     }
     input.addEventListener("input", clearError);
     input.addEventListener("change", commit);
     input.addEventListener("keydown", event => {
       if (event.key === "Enter") { event.preventDefault(); commit(); }
-      if (event.key === "Escape") { input.value = terms[target.term][target.node]; clearError(); }
+      if (event.key === "Escape") { input.value = courseLabel(terms[target.term][target.node]); clearError(); }
     });
     placeButton.addEventListener("click", () => { if (pending) place(target, pending); });
     move.addEventListener("click", () => {
@@ -255,8 +381,8 @@
       event.preventDefault(); item.classList.remove("is-drag-over");
       try {
         const payload = JSON.parse(event.dataTransfer.getData(dragType));
-        if (payload && typeof payload.code === "string" && /^\d{4}$/.test(payload.code)) place(target, payload);
-      } catch { announce("Choose a course from the recommendations or type a course number."); }
+        if (payload && payload.code && normalizeCourse(payload.code) === payload.code) place(target, payload);
+      } catch { announce("Choose a course from the list or type its course code."); }
     });
     return item;
   }
@@ -290,23 +416,37 @@
     refreshNodes();
   }
 
-  function courseList(courses) {
+  function courseList(courses, custom = false) {
     const list = element("ul", "", "roadmap-course-list");
     courses.forEach(([number, reason]) => {
-      const code = String(number);
+      const code = normalizeCourse(String(number));
+      const info = infoFor(code);
       const item = element("li", "", "roadmap-suggestion");
       const pick = element("button", "", "roadmap-pick");
       pick.type = "button"; pick.draggable = true; pick.dataset.course = code;
-      pick.setAttribute("aria-label", `Select MATH ${code}: ${titles[code]}`);
+      pick.setAttribute("aria-label", `Select ${info.label}: ${info.title}`);
       pick.setAttribute("aria-pressed", "false");
-      pick.append(element("strong", `MATH ${code}`), element("span", titles[code]), element("small", "Select or drag into a node"));
+      pick.append(element("strong", info.label), element("span", info.title), element("small", "Select or drag into a node"));
       pick.addEventListener("click", () => {
         setPending(pending?.code === code && !pending.source ? null : { code }); announce(selection.textContent);
       });
       pick.addEventListener("dragstart", event => startDrag(event, { code }));
       const details = element("a", "Course details");
-      details.href = `math-${code}.html`; details.setAttribute("aria-label", `Course details for MATH ${code}`);
-      item.append(pick, element("p", reason), details); list.append(item);
+      details.href = info.href; details.setAttribute("aria-label", `Course details for ${info.label}`);
+      item.append(pick, element("p", reason), details);
+      if (custom) {
+        const remove = element("button", "Remove from list", "roadmap-custom-remove");
+        remove.type = "button";
+        remove.setAttribute("aria-label", `Remove ${info.label} from custom courses`);
+        remove.addEventListener("click", () => {
+          customCourses = customCourses.filter(value => value !== code);
+          if (pending?.code === code && !pending.source) setPending(null);
+          renderRecommendations(); save(); customInput.focus();
+          announce(`${info.label} removed from the custom course list. Placed courses are kept.`);
+        });
+        item.append(remove);
+      }
+      list.append(item);
     });
     return list;
   }
@@ -322,12 +462,16 @@
       [4140, "Part of the honors analysis sequence suggested for graduate study in economics."],
       ...track.courses.filter(([code]) => code !== 3110)
     ];
-    bank.replaceChildren(element("h3", `${track.name} suggestions`), courseList(courses));
+    bank.replaceChildren();
+    if (customCourses.length) bank.append(element("h3", "Your custom courses"), courseList(customCourses.map(code => [code, "Added by you."]), true));
+    const customSet = new Set(customCourses);
+    const suggested = courses.filter(([code]) => !customSet.has(String(code)));
+    bank.append(element("h3", `${track.name} suggestions`), courseList(suggested));
     const common = [[3610, "Suggested for students interested in competitions."],
       [4040, "Suggested for students interested in competitions."]];
     if (preparation === "foundations" || preparation === "calculus") common.unshift([3040, "Helps students learn to write mathematical proofs."]);
     const alreadyListed = new Set(courses.map(([code]) => code));
-    bank.append(element("h3", "For any concentration"), courseList(common.filter(([code]) => !alreadyListed.has(code))));
+    bank.append(element("h3", "For any concentration"), courseList(common.filter(([code]) => !alreadyListed.has(code) && !customSet.has(String(code)))));
     document.getElementById("roadmap-preparation-advice").textContent = preparation === "foundations" || preparation === "calculus"
       ? "Building proof experience? Consider MATH 3040; many 3000-level courses also introduce proofs."
       : preparation === "honors"
@@ -336,6 +480,24 @@
     refreshNodes();
   }
 
+  customInput.addEventListener("input", () => {
+    customInput.setCustomValidity(""); customInput.removeAttribute("aria-invalid"); customError.hidden = true;
+  });
+  customForm.addEventListener("submit", event => {
+    event.preventDefault();
+    const code = normalizeCourse(customInput.value);
+    if (!code || (!customCourses.includes(code) && customCourses.length >= 100)) {
+      const message = code ? "Remove a custom course before adding another; the list holds up to 100 courses."
+        : "Enter a subject and four-digit number, such as CS 2110. A number alone means MATH.";
+      customInput.setCustomValidity(message); customInput.setAttribute("aria-invalid", "true");
+      customError.textContent = message; customError.hidden = false; announce(message); return;
+    }
+    if (!customCourses.includes(code)) customCourses.push(code);
+    customInput.value = "";
+    renderRecommendations(); setPending({ code }); save();
+    bank.scrollTop = 0;
+    announce(`${courseLabel(code)} added and selected. Choose Place here on an empty node.`);
+  });
   form.addEventListener("submit", event => event.preventDefault());
   form.addEventListener("change", () => {
     setPending(null); renderRecommendations(); save();

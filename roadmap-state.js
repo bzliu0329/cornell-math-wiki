@@ -5,15 +5,28 @@
   const normalizeCourse = value => {
     if (typeof value !== "string") return null;
     if (!value.trim()) return "";
-    const match = value.trim().match(/^(?:MATH\s*)?(\d{4})$/i);
-    return match ? match[1] : null;
+    const match = value.trim().match(/^(?:([A-Z]{2,8})[\s-]*)?(\d{4})$/i);
+    if (!match) return null;
+    const subject = (match[1] || "MATH").toUpperCase();
+    return subject === "MATH" ? match[2] : `${subject} ${match[2]}`;
   };
+  const courseLabel = value => {
+    const code = normalizeCourse(value);
+    return code ? (/^\d{4}$/.test(code) ? `MATH ${code}` : code) : "";
+  };
+  function courseDetails(value, catalog = {}) {
+    const label = courseLabel(value);
+    if (!label) return null;
+    const entry = catalog[label];
+    return { label, title: entry?.title || "Custom course",
+      href: entry?.href || `https://catalog.cornell.edu/search/?P=${encodeURIComponent(label)}` };
+  }
   const validTarget = (terms, target) => target && Number.isInteger(target.term) &&
     Number.isInteger(target.node) && Array.isArray(terms[target.term]) &&
     target.node >= 0 && target.node < terms[target.term].length;
 
   function placeCourse(terms, target, code, source = null) {
-    if (!validTarget(terms, target) || typeof code !== "string" || !/^\d{4}$/.test(code)) return { ok: false, reason: "invalid" };
+    if (!validTarget(terms, target) || !code || normalizeCourse(code) !== code) return { ok: false, reason: "invalid" };
     if (source && (!validTarget(terms, source) || terms[source.term][source.node] !== code)) {
       return { ok: false, reason: "stale" };
     }
@@ -30,8 +43,10 @@
       const plan = JSON.parse(raw);
       if (plan.version !== 1 || !Array.isArray(plan.terms) || plan.terms.length !== 8) return null;
       if (!plan.terms.every(term => Array.isArray(term) && term.length >= 1 && term.length <= 8 &&
-        term.every(code => typeof code === "string" && (code === "" || /^\d{4}$/.test(code))))) return null;
-      return { terms: plan.terms.map(term => [...term]), filters: plan.filters || {} };
+        term.every(code => normalizeCourse(code) !== null))) return null;
+      const customCourses = Array.isArray(plan.customCourses)
+        ? [...new Set(plan.customCourses.slice(0, 100).map(normalizeCourse).filter(Boolean))] : [];
+      return { terms: plan.terms.map(term => term.map(normalizeCourse)), filters: plan.filters || {}, customCourses };
     } catch { return null; }
   }
 
@@ -75,7 +90,7 @@
     return terms;
   }
 
-  const api = { emptyTerms, normalizeCourse, placeCourse, readPlan, recommendedTerms };
+  const api = { emptyTerms, normalizeCourse, courseLabel, courseDetails, placeCourse, readPlan, recommendedTerms };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.MathRoadmapState = api;
 })(globalThis);
