@@ -1,16 +1,152 @@
 /* Course recommendations from mathwiiki website.txt. */
 (() => {
 "use strict";
-  // Course names and destinations from the existing wiki course pages.
+  // Wiki course pages, supplemented with Cornell FA26 roster titles (2026-10-19).
+  // Source: https://classes.cornell.edu/api/2.0/search/classes.json?roster=FA26&subject=ECON
+  // Suggestions are a lookup list, not a guarantee of semester availability.
   const catalog = {
     "CS 1110": {"title": "Introduction to Computing: A Design and Development Perspective", "href": "cs-1110.html"},
+    "CS 1112": {"title": "Introduction to Computing: An Engineering and Science Perspective", "href": "https://catalog.cornell.edu/search/?P=CS%201112"},
+    "CS 1132": {"title": "Short Course in MATLAB", "href": "https://catalog.cornell.edu/search/?P=CS%201132"},
+    "CS 1133": {"title": "Short Course in Python", "href": "https://catalog.cornell.edu/search/?P=CS%201133"},
+    "CS 1710": {"title": "Introduction to Cognitive Science", "href": "https://catalog.cornell.edu/search/?P=CS%201710"},
+    "CS 1998": {"title": "First-year and Nontechnical Team Projects", "href": "https://catalog.cornell.edu/search/?P=CS%201998"},
+    "CS 2024": {"title": "C++ Programming", "href": "https://catalog.cornell.edu/search/?P=CS%202024"},
     "CS 2110": {"title": "Object-Oriented Programming and Data Structures", "href": "cs-2110.html"},
+    "CS 2112": {"title": "Object-Oriented Design and Data Structures - Honors", "href": "https://catalog.cornell.edu/search/?P=CS%202112"},
     "CS 2800": {"title": "Mathematical Foundations of Computing", "href": "cs-2800.html"},
+    "CS 2850": {"title": "Networks", "href": "https://catalog.cornell.edu/search/?P=CS%202850"},
     "CS 3110": {"title": "Functional Programming and Data Structures", "href": "cs-3110.html"},
     "CS 3410": {"title": "Computer System Organization and Programming", "href": "cs-3410.html"},
+    "CS 3420": {"title": "Embedded Systems", "href": "https://catalog.cornell.edu/search/?P=CS%203420"},
+    "CS 3700": {"title": "Foundations of AI Reasoning and Decision-Making", "href": "https://catalog.cornell.edu/search/?P=CS%203700"},
+    "CS 3780": {"title": "Introduction to Machine Learning", "href": "https://catalog.cornell.edu/search/?P=CS%203780"},
+    "CS 4090": {"title": "Teaching Experience in Computer Science", "href": "https://catalog.cornell.edu/search/?P=CS%204090"},
+    "CS 4210": {"title": "Numerical Analysis and Differential Equations", "href": "https://catalog.cornell.edu/search/?P=CS%204210"},
     "CS 4220": {"title": "Numerical Analysis: Linear and Nonlinear Problems", "href": "cs-4220.html"},
+    "CS 4320": {"title": "Introduction to Database Systems", "href": "https://catalog.cornell.edu/search/?P=CS%204320"},
+    "CS 4321": {"title": "Practicum in Database Systems", "href": "https://catalog.cornell.edu/search/?P=CS%204321"},
+    "CS 4414": {"title": "Systems Programming", "href": "https://catalog.cornell.edu/search/?P=CS%204414"},
+    "CS 4420": {"title": "Computer Architecture", "href": "https://catalog.cornell.edu/search/?P=CS%204420"},
+    "CS 4620": {"title": "Introduction to Computer Graphics", "href": "https://catalog.cornell.edu/search/?P=CS%204620"},
+    "CS 4621": {"title": "Computer Graphics Practicum", "href": "https://catalog.cornell.edu/search/?P=CS%204621"},
+    "CS 4701": {"title": "Practicum in Artificial Intelligence", "href": "https://catalog.cornell.edu/search/?P=CS%204701"},
+    "CS 4744": {"title": "Computational Linguistics I", "href": "https://catalog.cornell.edu/search/?P=CS%204744"},
+    "CS 4750": {"title": "Foundations of Robotics", "href": "https://catalog.cornell.edu/search/?P=CS%204750"},
     "CS 4782": {"title": "Introduction to Deep Learning", "href": "cs-4782.html"},
+    "CS 4787": {"title": "Principles of Large-Scale Machine Learning Systems", "href": "https://catalog.cornell.edu/search/?P=CS%204787"},
+    "CS 4789": {"title": "Introduction to Reinforcement Learning", "href": "https://catalog.cornell.edu/search/?P=CS%204789"},
+    "CS 4814": {"title": "Introduction to Computational Complexity", "href": "https://catalog.cornell.edu/search/?P=CS%204814"},
     "CS 4820": {"title": "Introduction to Analysis of Algorithms", "href": "cs-4820.html"},
+    "CS 4997": {"title": "Practical Training in Computer Science", "href": "https://catalog.cornell.edu/search/?P=CS%204997"},
+    "CS 4998": {"title": "Team Projects", "href": "https://catalog.cornell.edu/search/?P=CS%204998"},
+    "CS 4999": {"title": "Independent Reading and Research", "href": "https://catalog.cornell.edu/search/?P=CS%204999"},
+    "CS 5112": {"title": "Algorithms and Data Structures for Applications", "href": "https://catalog.cornell.edu/search/?P=CS%205112"},
+    "CS 5154": {"title": "Software Testing", "href": "https://catalog.cornell.edu/search/?P=CS%205154"},
+    "CS 5306": {"title": "Crowdsourcing and Human Computation", "href": "https://catalog.cornell.edu/search/?P=CS%205306"},
+    "CS 5320": {"title": "Introduction to Database Systems", "href": "https://catalog.cornell.edu/search/?P=CS%205320"},
+    "CS 5321": {"title": "Practicum in Database Systems", "href": "https://catalog.cornell.edu/search/?P=CS%205321"},
+    "CS 5342": {"title": "Trust and Safety: Platforms, Policies, Products", "href": "https://catalog.cornell.edu/search/?P=CS%205342"},
+    "CS 5414": {"title": "Distributed Computing Principles", "href": "https://catalog.cornell.edu/search/?P=CS%205414"},
+    "CS 5416": {"title": "Cloud Computing and ML Hosting", "href": "https://catalog.cornell.edu/search/?P=CS%205416"},
+    "CS 5424": {"title": "Developing and Designing Interactive Devices", "href": "https://catalog.cornell.edu/search/?P=CS%205424"},
+    "CS 5470": {"title": "Systems for Large-Scale ML", "href": "https://catalog.cornell.edu/search/?P=CS%205470"},
+    "CS 5620": {"title": "Introduction to Computer Graphics", "href": "https://catalog.cornell.edu/search/?P=CS%205620"},
+    "CS 5621": {"title": "Computer Graphics Practicum", "href": "https://catalog.cornell.edu/search/?P=CS%205621"},
+    "CS 5650": {"title": "Virtual and Augmented Reality", "href": "https://catalog.cornell.edu/search/?P=CS%205650"},
+    "CS 5672": {"title": "Frontiers of Computer Vision", "href": "https://catalog.cornell.edu/search/?P=CS%205672"},
+    "CS 5682": {"title": "HCI and Design", "href": "https://catalog.cornell.edu/search/?P=CS%205682"},
+    "CS 5700": {"title": "Foundations of AI Reasoning and Decision-Making", "href": "https://catalog.cornell.edu/search/?P=CS%205700"},
+    "CS 5727": {"title": "Optimization Methods", "href": "https://catalog.cornell.edu/search/?P=CS%205727"},
+    "CS 5750": {"title": "Foundations of Robotics", "href": "https://catalog.cornell.edu/search/?P=CS%205750"},
+    "CS 5754": {"title": "Modern Computer Systems and Architecture", "href": "https://catalog.cornell.edu/search/?P=CS%205754"},
+    "CS 5777": {"title": "Principles of Large-Scale Machine Learning Systems", "href": "https://catalog.cornell.edu/search/?P=CS%205777"},
+    "CS 5780": {"title": "Introduction to Machine Learning", "href": "https://catalog.cornell.edu/search/?P=CS%205780"},
+    "CS 5785": {"title": "Applied Machine Learning", "href": "https://catalog.cornell.edu/search/?P=CS%205785"},
+    "CS 5787": {"title": "Deep Learning", "href": "https://catalog.cornell.edu/search/?P=CS%205787"},
+    "CS 5789": {"title": "Introduction to Reinforcement Learning", "href": "https://catalog.cornell.edu/search/?P=CS%205789"},
+    "CS 5814": {"title": "Introduction to Computational Complexity", "href": "https://catalog.cornell.edu/search/?P=CS%205814"},
+    "CS 5820": {"title": "Analysis of Algorithms", "href": "https://catalog.cornell.edu/search/?P=CS%205820"},
+    "CS 5854": {"title": "Networks and Markets", "href": "https://catalog.cornell.edu/search/?P=CS%205854"},
+    "CS 5998": {"title": "Master of Engineering Internship", "href": "https://catalog.cornell.edu/search/?P=CS%205998"},
+    "CS 5999": {"title": "Master of Engineering Project", "href": "https://catalog.cornell.edu/search/?P=CS%205999"},
+    "CS 6006": {"title": "Succeeding in the Graduate Environment", "href": "https://catalog.cornell.edu/search/?P=CS%206006"},
+    "CS 6117": {"title": "Category Theory for Computer Scientists", "href": "https://catalog.cornell.edu/search/?P=CS%206117"},
+    "CS 6158": {"title": "Software Engineering in the Era of Machine Learning", "href": "https://catalog.cornell.edu/search/?P=CS%206158"},
+    "CS 6172": {"title": "Program Synthesis", "href": "https://catalog.cornell.edu/search/?P=CS%206172"},
+    "CS 6220": {"title": "Data-Sparse Matrix Computations", "href": "https://catalog.cornell.edu/search/?P=CS%206220"},
+    "CS 6672": {"title": "3D Vision", "href": "https://catalog.cornell.edu/search/?P=CS%206672"},
+    "CS 6703": {"title": "AI for Science", "href": "https://catalog.cornell.edu/search/?P=CS%206703"},
+    "CS 6758": {"title": "Deep Learning for Robotics", "href": "https://catalog.cornell.edu/search/?P=CS%206758"},
+    "CS 6786": {"title": "Probabilistic Machine Learning for Scientific Discovery", "href": "https://catalog.cornell.edu/search/?P=CS%206786"},
+    "CS 6802": {"title": "Lattices: Geometry, Cryptography, and Algorithms", "href": "https://catalog.cornell.edu/search/?P=CS%206802"},
+    "CS 6814": {"title": "Probabilistic Proofs", "href": "https://catalog.cornell.edu/search/?P=CS%206814"},
+    "CS 6850": {"title": "The Structure of Information Networks", "href": "https://catalog.cornell.edu/search/?P=CS%206850"},
+    "CS 7090": {"title": "Computer Science Colloquium", "href": "https://catalog.cornell.edu/search/?P=CS%207090"},
+    "CS 7190": {"title": "Seminar in Programming Languages", "href": "https://catalog.cornell.edu/search/?P=CS%207190"},
+    "CS 7290": {"title": "Seminar on Scientific Computing and Numerics", "href": "https://catalog.cornell.edu/search/?P=CS%207290"},
+    "CS 7490": {"title": "Systems Research Seminar", "href": "https://catalog.cornell.edu/search/?P=CS%207490"},
+    "CS 7542": {"title": "Life at Scale: Parallel and High-Performance Computing for Genomics", "href": "https://catalog.cornell.edu/search/?P=CS%207542"},
+    "CS 7690": {"title": "Computer Graphics and Vision Seminar", "href": "https://catalog.cornell.edu/search/?P=CS%207690"},
+    "CS 7790": {"title": "Seminar in Artificial Intelligence", "href": "https://catalog.cornell.edu/search/?P=CS%207790"},
+    "CS 7794": {"title": "Seminar in Natural Language Understanding", "href": "https://catalog.cornell.edu/search/?P=CS%207794"},
+    "CS 7796": {"title": "Robotics Seminar", "href": "https://catalog.cornell.edu/search/?P=CS%207796"},
+    "CS 7890": {"title": "Seminar in Theory of Algorithms and Computing", "href": "https://catalog.cornell.edu/search/?P=CS%207890"},
+    "CS 7999": {"title": "Independent Research", "href": "https://catalog.cornell.edu/search/?P=CS%207999"},
+    "ECON 1110": {"title": "Introductory Microeconomics", "href": "https://catalog.cornell.edu/search/?P=ECON%201110"},
+    "ECON 1120": {"title": "Introductory Macroeconomics", "href": "https://catalog.cornell.edu/search/?P=ECON%201120"},
+    "ECON 2100": {"title": "Teaching and Learning Economics", "href": "https://catalog.cornell.edu/search/?P=ECON%202100"},
+    "ECON 2801": {"title": "Game Theory: For Economics, Politics, Knowledge and Rationality", "href": "https://catalog.cornell.edu/search/?P=ECON%202801"},
+    "ECON 2850": {"title": "Networks", "href": "https://catalog.cornell.edu/search/?P=ECON%202850"},
+    "ECON 3030": {"title": "Intermediate Microeconomic Theory", "href": "https://catalog.cornell.edu/search/?P=ECON%203030"},
+    "ECON 3040": {"title": "Intermediate Macroeconomic Theory", "href": "https://catalog.cornell.edu/search/?P=ECON%203040"},
+    "ECON 3110": {"title": "Applied Probability and Statistics", "href": "https://catalog.cornell.edu/search/?P=ECON%203110"},
+    "ECON 3120": {"title": "Applied Econometrics", "href": "https://catalog.cornell.edu/search/?P=ECON%203120"},
+    "ECON 3130": {"title": "Probability and Statistics", "href": "https://catalog.cornell.edu/search/?P=ECON%203130"},
+    "ECON 3171": {"title": "Causal Inference and Data Analysis for Public Policy", "href": "https://catalog.cornell.edu/search/?P=ECON%203171"},
+    "ECON 3250": {"title": "Economics of the U.S. Social Safety Net", "href": "https://catalog.cornell.edu/search/?P=ECON%203250"},
+    "ECON 3255": {"title": "Economics of Crime", "href": "https://catalog.cornell.edu/search/?P=ECON%203255"},
+    "ECON 3300": {"title": "Development of Economic Thought and Institutions", "href": "https://catalog.cornell.edu/search/?P=ECON%203300"},
+    "ECON 3440": {"title": "Women in the Economy", "href": "https://catalog.cornell.edu/search/?P=ECON%203440"},
+    "ECON 3450": {"title": "Economic Analysis of the Welfare State", "href": "https://catalog.cornell.edu/search/?P=ECON%203450"},
+    "ECON 3545": {"title": "Money and Finance in the Digital Age", "href": "https://catalog.cornell.edu/search/?P=ECON%203545"},
+    "ECON 3720": {"title": "The Economics of Health Care Markets", "href": "https://catalog.cornell.edu/search/?P=ECON%203720"},
+    "ECON 3805": {"title": "Competition Law and Policy", "href": "https://catalog.cornell.edu/search/?P=ECON%203805"},
+    "ECON 3830": {"title": "Economics of Consumer Protection and the Law", "href": "https://catalog.cornell.edu/search/?P=ECON%203830"},
+    "ECON 3850": {"title": "Economics and Environmental Policy", "href": "https://catalog.cornell.edu/search/?P=ECON%203850"},
+    "ECON 3855": {"title": "Urban Economics", "href": "https://catalog.cornell.edu/search/?P=ECON%203855"},
+    "ECON 3865": {"title": "Environmental Economics", "href": "https://catalog.cornell.edu/search/?P=ECON%203865"},
+    "ECON 4140": {"title": "Methods and Computation in Program Evaluation", "href": "https://catalog.cornell.edu/search/?P=ECON%204140"},
+    "ECON 4400": {"title": "Labor Economics", "href": "https://catalog.cornell.edu/search/?P=ECON%204400"},
+    "ECON 4410": {"title": "Quantitative Models for the Labor Market", "href": "https://catalog.cornell.edu/search/?P=ECON%204410"},
+    "ECON 4660": {"title": "Behavioral Economics", "href": "https://catalog.cornell.edu/search/?P=ECON%204660"},
+    "ECON 4670": {"title": "Applications of Behavioral Economics", "href": "https://catalog.cornell.edu/search/?P=ECON%204670"},
+    "ECON 4903": {"title": "Quantitative Analysis of Economic Data", "href": "https://catalog.cornell.edu/search/?P=ECON%204903"},
+    "ECON 4998": {"title": "Cross-Cultural Work Experiences", "href": "https://catalog.cornell.edu/search/?P=ECON%204998"},
+    "ECON 4999": {"title": "Independent Study in Economics", "href": "https://catalog.cornell.edu/search/?P=ECON%204999"},
+    "ECON 6090": {"title": "Microeconomic Theory I", "href": "https://catalog.cornell.edu/search/?P=ECON%206090"},
+    "ECON 6130": {"title": "Macroeconomics I", "href": "https://catalog.cornell.edu/search/?P=ECON%206130"},
+    "ECON 6170": {"title": "Intermediate Mathematical Economics I", "href": "https://catalog.cornell.edu/search/?P=ECON%206170"},
+    "ECON 6190": {"title": "Econometrics I", "href": "https://catalog.cornell.edu/search/?P=ECON%206190"},
+    "ECON 6590": {"title": "Empirical Strategies for Policy Analysis", "href": "https://catalog.cornell.edu/search/?P=ECON%206590"},
+    "ECON 6990": {"title": "Readings in Economics", "href": "https://catalog.cornell.edu/search/?P=ECON%206990"},
+    "ECON 7190": {"title": "Advanced Topics in Econometrics I", "href": "https://catalog.cornell.edu/search/?P=ECON%207190"},
+    "ECON 7260": {"title": "Econometrics of Network Analysis", "href": "https://catalog.cornell.edu/search/?P=ECON%207260"},
+    "ECON 7265": {"title": "Production Networks", "href": "https://catalog.cornell.edu/search/?P=ECON%207265"},
+    "ECON 7325": {"title": "Firm Dynamics and Aggregate Productivity", "href": "https://catalog.cornell.edu/search/?P=ECON%207325"},
+    "ECON 7335": {"title": "Introduction to Information Economics", "href": "https://catalog.cornell.edu/search/?P=ECON%207335"},
+    "ECON 7420": {"title": "Seminar in Labor Economics I", "href": "https://catalog.cornell.edu/search/?P=ECON%207420"},
+    "ECON 7510": {"title": "Industrial Organization and Structural Methods", "href": "https://catalog.cornell.edu/search/?P=ECON%207510"},
+    "ECON 7660": {"title": "Microeconomics of International Development", "href": "https://catalog.cornell.edu/search/?P=ECON%207660"},
+    "ECON 7841": {"title": "Econometrics Workshop", "href": "https://catalog.cornell.edu/search/?P=ECON%207841"},
+    "ECON 7842": {"title": "Microeconomic Theory Workshop", "href": "https://catalog.cornell.edu/search/?P=ECON%207842"},
+    "ECON 7843": {"title": "Industrial Organization Workshop", "href": "https://catalog.cornell.edu/search/?P=ECON%207843"},
+    "ECON 7845": {"title": "Workshop in Labor Economics", "href": "https://catalog.cornell.edu/search/?P=ECON%207845"},
+    "ECON 7846": {"title": "S.C. Tsiang Macroeconomics Workshop", "href": "https://catalog.cornell.edu/search/?P=ECON%207846"},
+    "ECON 7847": {"title": "Development Workshop", "href": "https://catalog.cornell.edu/search/?P=ECON%207847"},
+    "ECON 7849": {"title": "Behavioral Economics Workshop", "href": "https://catalog.cornell.edu/search/?P=ECON%207849"},
+    "ECON 7850": {"title": "Third Year Research Seminar", "href": "https://catalog.cornell.edu/search/?P=ECON%207850"},
+    "ECON 7854": {"title": "Law, Economics, and Public Policy Seminar", "href": "https://catalog.cornell.edu/search/?P=ECON%207854"},
     "MATH 1006": {"title": "Academic Support for MATH 1106", "href": "math-1006.html"},
     "MATH 1011": {"title": "Academic Support for MATH 1110", "href": "math-1011.html"},
     "MATH 1012": {"title": "Academic Support for MATH 1120", "href": "math-1012.html"},
@@ -120,6 +256,13 @@
     "MATH 6830": {"title": "Model Theory", "href": "math-6830.html"},
     "MATH 6840": {"title": "Recursion Theory", "href": "math-6840.html"},
     "MATH 6870": {"title": "Set Theory", "href": "math-6870.html"},
+    "MATH 7110": {"title": "Topics in Analysis", "href": "https://catalog.cornell.edu/search/?P=MATH%207110"},
+    "MATH 7160": {"title": "Topics in Partial Differential Equations", "href": "https://catalog.cornell.edu/search/?P=MATH%207160"},
+    "MATH 7280": {"title": "Topics in Dynamical Systems", "href": "https://catalog.cornell.edu/search/?P=MATH%207280"},
+    "MATH 7290": {"title": "Seminar on Scientific Computing and Numerics", "href": "https://catalog.cornell.edu/search/?P=MATH%207290"},
+    "MATH 7510": {"title": "Berstein Seminar in Topology", "href": "https://catalog.cornell.edu/search/?P=MATH%207510"},
+    "MATH 7610": {"title": "Topics in Geometry", "href": "https://catalog.cornell.edu/search/?P=MATH%207610"},
+    "MATH 7900": {"title": "Supervised Reading and Research", "href": "https://catalog.cornell.edu/search/?P=MATH%207900"},
     "ORIE 3300": {"title": "Optimization I", "href": "orie-3300.html"},
     "ORIE 3310": {"title": "Optimization II", "href": "orie-3310.html"},
     "ORIE 3500": {"title": "Eng Probability and Statistics: Modeling and Data Science II", "href": "orie-3500.html"},
@@ -168,7 +311,7 @@
     [4180, "Specifically suggested for students interested in mathematics graduate study."],
     [4530, "Specifically suggested for students interested in mathematics graduate study."]
   ];
-  const { emptyTerms, normalizeCourse, courseLabel, courseDetails, placeCourse, readPlan, recommendedTerms } = window.MathRoadmapState;
+  const { emptyTerms, normalizeCourse, courseLabel, courseDetails, findCourseSuggestions, placeCourse, readPlan, recommendedTerms } = window.MathRoadmapState;
   const infoFor = code => courseDetails(code, catalog);
   const storageKey = "cornell-math-roadmap-editor-v1";
   const dragType = "application/x-cornell-math-course";
@@ -182,6 +325,12 @@
   const board = document.getElementById("roadmap-board");
   const customForm = document.getElementById("roadmap-custom-form");
   const customInput = document.getElementById("roadmap-custom-course");
+  const customSubject = document.getElementById("roadmap-custom-subject");
+  const otherSubject = document.getElementById("roadmap-other-subject");
+  const otherSubjectField = document.getElementById("roadmap-other-subject-field");
+  const customMatches = document.getElementById("roadmap-custom-matches");
+  const customMatchStatus = document.getElementById("roadmap-custom-match-status");
+  const selectedSubject = () => customSubject.value === "other" ? otherSubject.value.trim().toUpperCase() : customSubject.value;
   const customError = document.getElementById("roadmap-custom-error");
   let terms = emptyTerms();
   let customCourses = [];
@@ -480,23 +629,54 @@
     refreshNodes();
   }
 
-  customInput.addEventListener("input", () => {
+  function clearCustomError() {
     customInput.setCustomValidity(""); customInput.removeAttribute("aria-invalid"); customError.hidden = true;
-  });
-  customForm.addEventListener("submit", event => {
-    event.preventDefault();
-    const code = normalizeCourse(customInput.value);
+  }
+  function renderCourseMatches() {
+    clearCustomError();
+    customMatches.replaceChildren();
+    const number = customInput.value.trim();
+    if (!number) { customMatchStatus.textContent = ""; return; }
+    const matches = findCourseSuggestions(selectedSubject(), number, catalog);
+    customMatchStatus.textContent = matches.length
+      ? "Matching courses — choose one to add it."
+      : /^\d{1,4}$/.test(number) ? "No matching courses in this list. You can still add a four-digit course number." : "Enter a course number using digits only.";
+    matches.forEach(info => {
+      const item = element("li");
+      const pick = element("button", "", "roadmap-course-match");
+      pick.type = "button";
+      pick.setAttribute("aria-label", `Add ${info.label}: ${info.title}`);
+      pick.append(element("strong", info.label), element("span", info.title));
+      pick.addEventListener("click", () => addCustomCourse(normalizeCourse(info.label)));
+      item.append(pick); customMatches.append(item);
+    });
+  }
+  function addCustomCourse(code) {
+    clearCustomError();
     if (!code || (!customCourses.includes(code) && customCourses.length >= 100)) {
       const message = code ? "Remove a custom course before adding another; the list holds up to 100 courses."
-        : "Enter a subject and four-digit number, such as CS 2110. A number alone means MATH.";
+        : "Choose a subject and enter a four-digit course number, such as CS and 2110.";
       customInput.setCustomValidity(message); customInput.setAttribute("aria-invalid", "true");
       customError.textContent = message; customError.hidden = false; announce(message); return;
     }
     if (!customCourses.includes(code)) customCourses.push(code);
     customInput.value = "";
-    renderRecommendations(); setPending({ code }); save();
-    bank.scrollTop = 0;
+    renderCourseMatches(); renderRecommendations(); setPending({ code }); save();
+    bank.scrollTop = 0; customInput.focus();
     announce(`${courseLabel(code)} added and selected. Choose Place here on an empty node.`);
+  }
+  customInput.addEventListener("input", renderCourseMatches);
+  otherSubject.addEventListener("input", renderCourseMatches);
+  customSubject.addEventListener("change", () => {
+    otherSubjectField.hidden = customSubject.value !== "other";
+    renderCourseMatches();
+  });
+  customForm.addEventListener("submit", event => {
+    event.preventDefault();
+    const number = customInput.value.trim();
+    const subject = selectedSubject();
+    const code = /^[A-Z]{2,8}$/.test(subject) && /^\d{4}$/.test(number) ? normalizeCourse(`${subject} ${number}`) : null;
+    addCustomCourse(code);
   });
   form.addEventListener("submit", event => event.preventDefault());
   form.addEventListener("change", () => {

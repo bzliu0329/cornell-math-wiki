@@ -21,6 +21,13 @@
     return { label, title: entry?.title || "Custom course",
       href: entry?.href || `https://catalog.cornell.edu/search/?P=${encodeURIComponent(label)}` };
   }
+  function findCourseSuggestions(subject, number, catalog, limit = 6) {
+    const prefix = typeof subject === "string" ? subject.trim().toUpperCase() : "";
+    const digits = typeof number === "string" ? number.trim() : "";
+    if (!/^[A-Z]{2,8}$/.test(prefix) || !/^\d{1,4}$/.test(digits)) return [];
+    return Object.keys(catalog).filter(label => label.startsWith(`${prefix} ${digits}`))
+      .sort().slice(0, limit).map(label => courseDetails(label, catalog));
+  }
   const validTarget = (terms, target) => target && Number.isInteger(target.term) &&
     Number.isInteger(target.node) && Array.isArray(terms[target.term]) &&
     target.node >= 0 && target.node < terms[target.term].length;
@@ -90,7 +97,7 @@
     return terms;
   }
 
-  const api = { emptyTerms, normalizeCourse, courseLabel, courseDetails, placeCourse, readPlan, recommendedTerms };
+  const api = { emptyTerms, normalizeCourse, courseLabel, courseDetails, findCourseSuggestions, placeCourse, readPlan, recommendedTerms };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.MathRoadmapState = api;
 })(globalThis);
