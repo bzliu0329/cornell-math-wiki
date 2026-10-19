@@ -624,7 +624,7 @@
     document.getElementById("roadmap-preparation-advice").textContent = preparation === "foundations" || preparation === "calculus"
       ? "Building proof experience? Consider MATH 3040; many 3000-level courses also introduce proofs."
       : preparation === "honors"
-        ? "Freshman year: MATH 2230 in Fall and MATH 2240 in Spring. Other recommended courses begin in sophomore year."
+        ? "Freshman year: MATH 2230 in Fall and MATH 2240 in Spring. Other sample courses begin in sophomore year."
         : "Proof experience selected. Use each course’s details to check its subject prerequisites.";
     refreshNodes();
   }
@@ -681,7 +681,7 @@
   form.addEventListener("submit", event => event.preventDefault());
   form.addEventListener("change", () => {
     setPending(null); renderRecommendations(); save();
-    announce("Recommendations updated. Your course map has been kept.");
+    announce("Sample courses updated. Your course map has been kept.");
   });
   document.getElementById("roadmap-show-recommended").addEventListener("click", () => {
     previousTerms = terms.map(term => [...term]);
@@ -689,7 +689,7 @@
     pending = null;
     renderBoard(); setPending(null); save();
     undo.hidden = false;
-    const message = `Suggested ${tracks[filters().concentration].name.toLowerCase()} roadmap loaded. You can edit every node.`;
+    const message = `Sample ${tracks[filters().concentration].name.toLowerCase()} roadmap loaded. You can edit every node.`;
     selection.textContent = message;
     announce(message);
     board.scrollIntoView({ block: "start" });

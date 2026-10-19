@@ -4,7 +4,7 @@
 #math-wiki .mw-logo {display:block;width:90px;height:auto;flex:0 0 90px;}
 @media(max-width:1200px){#math-wiki .mw-brand{align-self:flex-start;}}
 @media(max-width:600px){#math-wiki .mw-logo{width:70px;flex-basis:70px;}#math-wiki .mw-brand{font-size:23px;}}
-</style><link rel="stylesheet" href="roadmap.css?v=20261019-suggest-1">
+</style><link rel="stylesheet" href="roadmap.css?v=20261019-sample-1">
 <script id="roadmap-startup-check">
 document.addEventListener("DOMContentLoaded", function () {
   var editor = document.getElementById("roadmap-editor");
@@ -12,13 +12,13 @@ document.addEventListener("DOMContentLoaded", function () {
   var fallback = document.getElementById("roadmap-fallback");
   fallback.textContent = "The course map could not be loaded. ";
   var retry = document.createElement("a");
-  retry.href = "math-major-roadmap.html?preview=20261019-suggest-1";
+  retry.href = "math-major-roadmap.html?preview=20261019-sample-1";
   retry.textContent = "Reload the roadmap";
   fallback.appendChild(retry);
 });
 </script>
-<script src="roadmap-state.js?v=20261019-suggest-1" defer></script>
-<script src="roadmap.js?v=20261019-suggest-1" defer></script>
+<script src="roadmap-state.js?v=20261019-sample-1" defer></script>
+<script src="roadmap.js?v=20261019-sample-1" defer></script>
 </head><body><style>
 #math-wiki {font:400 16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#111;background:#fdfdfd;min-height:70vh;}
 #math-wiki * {box-sizing:border-box;}
@@ -74,9 +74,9 @@ document.addEventListener("DOMContentLoaded", function () {
           </select>
         </div>
         <div class="roadmap-field">
-          <span class="roadmap-field-label">Suggested course path</span>
-          <button id="roadmap-show-recommended" class="roadmap-show-recommended" type="button" aria-describedby="roadmap-template-help">Show recommended roadmap</button>
-          <p id="roadmap-template-help" class="roadmap-template-help">Replaces your map with a suggestion. You can undo immediately afterward.</p>
+          <span class="roadmap-field-label">Sample course path</span>
+          <button id="roadmap-show-recommended" class="roadmap-show-recommended" type="button" aria-describedby="roadmap-template-help">Show sample roadmap</button>
+          <p id="roadmap-template-help" class="roadmap-template-help">Replaces your map with a sample. You can undo immediately afterward.</p>
         </div>
       </div>
       <div class="roadmap-control-notes">
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
     </form>
     <div class="roadmap-workspace">
       <aside class="roadmap-bank" aria-labelledby="roadmap-bank-heading">
-        <h2 id="roadmap-bank-heading">Recommended courses</h2>
+        <h2 id="roadmap-bank-heading">Sample courses</h2>
         <p class="roadmap-bank-intro">Choose courses that fit your interests.</p>
         <a class="roadmap-jump" href="#roadmap-board">Go to your course map</a>
         <form id="roadmap-custom-form" class="roadmap-custom-form" novalidate>
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="roadmap-custom-entry"><button type="submit">Add course</button></div>
           <p id="roadmap-custom-error" class="roadmap-node-error" hidden></p>
         </form>
-        <div id="roadmap-recommendations" class="roadmap-bank-scroll" tabindex="0" role="region" aria-label="Course recommendations"></div>
+        <div id="roadmap-recommendations" class="roadmap-bank-scroll" tabindex="0" role="region" aria-label="Sample courses"></div>
       </aside>
       <section id="roadmap-board" class="roadmap-board" aria-labelledby="roadmap-board-heading" tabindex="-1">
         <div class="roadmap-board-heading">
@@ -118,6 +118,6 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
   <p id="roadmap-status" class="roadmap-sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
   <aside class="roadmap-note">
-    <p>The recommended roadmap is an editable starting point, with empty nodes left for your other choices. It does not check your individual prerequisites, semester offerings, or degree requirements. Review your plan with an advisor.</p>
+    <p>The sample roadmap is an editable starting point, with empty nodes left for your other choices. It does not check your individual prerequisites, semester offerings, or degree requirements. Review your plan with an advisor.</p>
   </aside>
 </main></div><footer style="border-top:1px solid #e8e8e8;padding:30px;color:#828282;font:15px/1.5 Arial,sans-serif"><div style="max-width:740px;margin:auto">Cornell Math Wiki<br>Courses and resources for the Cornell math community.</div><p style="margin:16px 0 0;text-align:center;font-size:14px;line-height:1.5;">Created and maintained by Undergraduate Math Club at Cornell</p></footer></body></html>
