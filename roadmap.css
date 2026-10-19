@@ -106,3 +106,21 @@
 @media (max-width: 420px) {
   #math-wiki .roadmap-years { grid-template-columns: 1fr; }
 }
+
+#math-wiki .roadmap-prior-courses { margin: 12px 0; font-size: 14px; }
+#math-wiki .roadmap-prior-courses summary, #math-wiki .roadmap-node-prerequisites summary { cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+#math-wiki .roadmap-prior-courses label { display: block; font-weight: 600; margin: 12px 0 6px; }
+#math-wiki .roadmap-prior-courses textarea { display: block; width: 100%; max-width: 640px; min-height: 64px; padding: 8px; border: 1px solid #767676; border-radius: 5px; resize: vertical; font: inherit; }
+#math-wiki .roadmap-prior-courses textarea::placeholder { color: #59636b; opacity: 1; }
+#math-wiki .roadmap-prior-courses p { max-width: 75ch; font-size: 12px; margin: 6px 0 10px; }
+#math-wiki .roadmap-prior-courses button { min-height: 40px; padding: 7px 12px; border: 1px solid #767676; border-radius: 5px; background: #fff; color: #111; cursor: pointer; font: inherit; }
+#math-wiki .roadmap-prior-courses button:hover { background: #f2f4f5; }
+#math-wiki .roadmap-prerequisite-summary { font-size: 13px; margin: 12px 0; color: #4e555b; }
+#math-wiki .roadmap-node-prerequisites { font-size: 12px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #dce0e3; overflow-wrap: anywhere; }
+#math-wiki .roadmap-node-prerequisites p { font-size: 12px; line-height: 1.5; margin: 0 0 8px; }
+#math-wiki .roadmap-node-prerequisites ul { margin: 0 0 10px; padding-left: 16px; }
+#math-wiki .roadmap-node-prerequisites li + li { margin-top: 6px; }
+#math-wiki .roadmap-node-prerequisites .roadmap-prereq-heading { font-weight: 600; }
+#math-wiki .has-prerequisite-warning .roadmap-node-prerequisites { color: #734000; border-top-color: #b99b75; }
+#math-wiki .has-prerequisite-warning .roadmap-prereq-heading { padding: 5px 7px; background: #fff1d6; border-radius: 4px; }
+#math-wiki .roadmap-node-prerequisites details p { margin-top: 8px; }

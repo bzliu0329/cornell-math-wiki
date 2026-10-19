@@ -311,7 +311,8 @@
     [4180, "Specifically suggested for students interested in mathematics graduate study."],
     [4530, "Specifically suggested for students interested in mathematics graduate study."]
   ];
-  const { emptyTerms, normalizeCourse, courseLabel, courseDetails, findCourseSuggestions, placeCourse, readPlan, recommendedTerms } = window.MathRoadmapState;
+  const { emptyTerms, normalizeCourse, courseLabel, courseDetails, findCourseSuggestions, checkPrerequisites, placeCourse, readPlan, recommendedTerms } = window.MathRoadmapState;
+  const prerequisiteData = window.MathRoadmapPrerequisites;
   const infoFor = code => courseDetails(code, catalog);
   const storageKey = "cornell-math-roadmap-editor-v1";
   const dragType = "application/x-cornell-math-course";
@@ -332,6 +333,11 @@
   const customMatchStatus = document.getElementById("roadmap-custom-match-status");
   const selectedSubject = () => customSubject.value === "other" ? otherSubject.value.trim().toUpperCase() : customSubject.value;
   const customError = document.getElementById("roadmap-custom-error");
+  const completedForm = document.getElementById("roadmap-completed-form");
+  const completedInput = document.getElementById("roadmap-completed-courses");
+  const completedError = document.getElementById("roadmap-completed-error");
+  const prerequisiteSummary = document.getElementById("roadmap-prerequisite-summary");
+  let completedCourses = [];
   let terms = emptyTerms();
   let customCourses = [];
   let pending = null;
@@ -358,6 +364,7 @@
     if (saved) {
       terms = saved.terms;
       customCourses = saved.customCourses;
+      completedCourses = saved.completedCourses;
       for (const name of ["concentration", "preparation"]) {
         const select = form.elements[name];
         if ([...select.options].some(option => option.value === saved.filters[name])) select.value = saved.filters[name];
@@ -374,9 +381,54 @@
   function save() {
     const indicator = document.getElementById("roadmap-save-status");
     try {
-      localStorage.setItem(storageKey, JSON.stringify({ version: 1, terms, filters: filters(), customCourses }));
+      localStorage.setItem(storageKey, JSON.stringify({ version: 1, terms, filters: filters(), customCourses, completedCourses }));
       indicator.textContent = "Saved in this browser";
     } catch { indicator.textContent = "Saving unavailable — keep this tab open to retain your plan."; }
+  }
+
+  function refreshPrerequisites() {
+    const checks = checkPrerequisites(terms, completedCourses, prerequisiteData);
+    checks.forEach(check => {
+      const view = nodeViews.get(nodeKey(check));
+      const signature = JSON.stringify(check);
+      if (view.prerequisiteSignature === signature) return;
+      view.prerequisiteSignature = signature;
+      view.container.classList.toggle("has-prerequisite-warning", check.kind === "warning");
+      view.prerequisites.replaceChildren();
+      view.prerequisites.hidden = check.kind === "ok";
+      if (check.kind === "ok") return;
+      view.prerequisites.append(element("p", check.kind === "warning" ? "Prerequisite warning" : "Check prerequisites", "roadmap-prereq-heading"));
+      if (check.missing.length || check.corequisites.length) {
+        const list = element("ul");
+        check.missing.forEach(requirement => list.append(element("li", `Needs ${requirement} in an earlier semester or prior coursework.`)));
+        check.corequisites.forEach(requirement => list.append(element("li", `Needs ${requirement} by this semester (may be taken together).`)));
+        view.prerequisites.append(list);
+      }
+      if (check.note) view.prerequisites.append(element("p", check.note));
+      if (check.entry) {
+        const details = element("details");
+        details.append(element("summary", "Requirement details"));
+        if (check.entry.prerequisite) details.append(element("p", `Prerequisites: ${check.entry.prerequisite}`));
+        if (check.entry.corequisite) details.append(element("p", `Corequisites: ${check.entry.corequisite}`));
+        if (check.entry.combined) details.append(element("p", check.entry.combined));
+        const source = element("a", "Cornell prerequisite listing");
+        source.href = check.entry.source;
+        details.append(source); view.prerequisites.append(details);
+      }
+    });
+    // Clear warning state when a filled node becomes empty.
+    nodeViews.forEach((view, key) => {
+      const [term, node] = key.split(":").map(Number);
+      if (!terms[term][node]) {
+        view.prerequisites.hidden = true; view.prerequisites.replaceChildren();
+        view.prerequisiteSignature = null; view.container.classList.remove("has-prerequisite-warning");
+      }
+    });
+    const warnings = checks.filter(check => check.kind === "warning").length;
+    const reviews = checks.filter(check => check.kind === "review").length;
+    const text = !checks.length ? "Add courses to check their prerequisites."
+      : `${warnings ? `${warnings} course${warnings === 1 ? " has" : "s have"} a prerequisite warning.` : "No missing course prerequisites found in checked rules."}${reviews ? ` ${reviews} course${reviews === 1 ? " needs" : "s need"} a manual check.` : ""}`;
+    if (prerequisiteSummary.textContent !== text) prerequisiteSummary.textContent = text;
   }
 
   function refreshNodes() {
@@ -401,6 +453,7 @@
       view.place.textContent = code ? "Swap here" : "Place here";
       view.place.setAttribute("aria-label", `${code ? "Swap with" : "Place course in"} ${nodeName({ term, node })}`);
     });
+    refreshPrerequisites();
     bank.querySelectorAll("[data-course]").forEach(button => {
       button.setAttribute("aria-pressed", String(Boolean(pending && !pending.source && pending.code === button.dataset.course)));
     });
@@ -457,13 +510,16 @@
     input.placeholder = "Course code";
     input.maxLength = 20;
     input.autocomplete = "off";
-    input.setAttribute("aria-describedby", `${id}-title ${id}-error`);
+    input.setAttribute("aria-describedby", `${id}-title ${id}-error ${id}-prerequisites`);
     number.append(input);
     const title = element("p", "", "roadmap-node-title");
     title.id = `${id}-title`;
     const error = element("p", "", "roadmap-node-error");
     error.id = `${id}-error`;
     error.hidden = true;
+    const prerequisites = element("div", "", "roadmap-node-prerequisites");
+    prerequisites.id = `${id}-prerequisites`;
+    prerequisites.hidden = true;
     const actions = element("div", "", "roadmap-node-actions");
     const placeButton = element("button", "Place here", "roadmap-place");
     const move = element("button", "Move");
@@ -474,8 +530,8 @@
     move.draggable = true;
     remove.setAttribute("aria-label", `Remove empty ${nodeName(target)}`);
     actions.append(placeButton, move, clear, details, remove);
-    item.append(label, number, title, error, actions);
-    nodeViews.set(nodeKey(target), { container: item, input, title, error, place: placeButton, move, clear, details, remove });
+    item.append(label, number, title, error, actions, prerequisites);
+    nodeViews.set(nodeKey(target), { container: item, input, title, error, prerequisites, place: placeButton, move, clear, details, remove });
     const clearError = () => { input.removeAttribute("aria-invalid"); input.setCustomValidity(""); error.hidden = true; };
     function commit() {
       const code = normalizeCourse(input.value);
@@ -665,6 +721,22 @@
     bank.scrollTop = 0; customInput.focus();
     announce(`${courseLabel(code)} added and selected. Choose Place here on an empty node.`);
   }
+  completedInput.value = completedCourses.map(courseLabel).join(", ");
+  completedInput.addEventListener("input", () => {
+    completedInput.removeAttribute("aria-invalid"); completedError.hidden = true;
+  });
+  completedForm.addEventListener("submit", event => {
+    event.preventDefault();
+    const codes = completedInput.value.split(/[,;\n]+/).map(value => normalizeCourse(value)).filter(value => value !== "");
+    if (codes.some(code => code === null) || codes.length > 100) {
+      completedInput.setAttribute("aria-invalid", "true");
+      completedError.textContent = "Enter up to 100 course codes separated by commas or new lines, such as MATH 1110, CS 1110.";
+      completedError.hidden = false; announce(completedError.textContent); return;
+    }
+    completedCourses = [...new Set(codes)];
+    completedInput.value = completedCourses.map(courseLabel).join(", ");
+    refreshNodes(); save(); announce("Prior coursework saved. Prerequisite warnings updated.");
+  });
   customInput.addEventListener("input", renderCourseMatches);
   otherSubject.addEventListener("input", renderCourseMatches);
   customSubject.addEventListener("change", () => {

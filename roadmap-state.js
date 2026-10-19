@@ -28,6 +28,45 @@
     return Object.keys(catalog).filter(label => label.startsWith(`${prefix} ${digits}`))
       .sort().slice(0, limit).map(label => courseDetails(label, catalog));
   }
+  const courseSet = courses => new Set(courses.map(courseLabel).filter(Boolean));
+  function requirementMet(rule, available) {
+    if (typeof rule === "string") return available.has(courseLabel(rule));
+    if (rule.all) return rule.all.every(part => requirementMet(part, available));
+    if (rule.any) return rule.any.some(part => requirementMet(part, available));
+    if (rule.level) return [...available].some(label => {
+      const [subject, number] = label.split(" ");
+      return subject === rule.subject && Number(number) >= rule.level;
+    });
+    return false;
+  }
+  function requirementLabel(rule) {
+    if (typeof rule === "string") return courseLabel(rule);
+    if (rule.all) return `(${rule.all.map(requirementLabel).join(" and ")})`;
+    if (rule.any) return `(${rule.any.map(requirementLabel).join(" or ")})`;
+    return `a ${rule.subject} course numbered ${rule.level} or above`;
+  }
+  function missingRequirements(rule, available) {
+    if (!rule || requirementMet(rule, available)) return [];
+    return rule.all ? rule.all.flatMap(part => missingRequirements(part, available)) : [requirementLabel(rule)];
+  }
+  function checkPrerequisites(terms, completedCourses, prerequisites) {
+    const completed = courseSet(completedCourses);
+    return terms.flatMap((term, termIndex) => term.flatMap((code, node) => {
+      if (!code) return [];
+      const label = courseLabel(code);
+      const entry = prerequisites[label];
+      if (!entry) return [{ term: termIndex, node, code, kind: "review", missing: [], corequisites: [],
+        note: "Prerequisite data unavailable. Check the course details." }];
+      const earlier = new Set([...completed, ...courseSet(terms.slice(0, termIndex).flat())]);
+      // Corequisites may be in this semester; a node can never satisfy itself.
+      const concurrent = new Set([...earlier, ...courseSet(term.filter((_, index) => index !== node))]);
+      const missing = missingRequirements(entry.required, earlier);
+      const corequisites = missingRequirements(entry.concurrent, concurrent);
+      const kind = missing.length || corequisites.length ? "warning" : entry.manual || entry.note ? "review" : "ok";
+      return [{ term: termIndex, node, code, kind, missing, corequisites, entry,
+        note: entry.manual ? "Some prerequisite conditions need a manual check." : entry.note || "" }];
+    }));
+  }
   const validTarget = (terms, target) => target && Number.isInteger(target.term) &&
     Number.isInteger(target.node) && Array.isArray(terms[target.term]) &&
     target.node >= 0 && target.node < terms[target.term].length;
@@ -53,7 +92,9 @@
         term.every(code => normalizeCourse(code) !== null))) return null;
       const customCourses = Array.isArray(plan.customCourses)
         ? [...new Set(plan.customCourses.slice(0, 100).map(normalizeCourse).filter(Boolean))] : [];
-      return { terms: plan.terms.map(term => term.map(normalizeCourse)), filters: plan.filters || {}, customCourses };
+      const completedCourses = Array.isArray(plan.completedCourses)
+        ? [...new Set(plan.completedCourses.slice(0, 100).map(normalizeCourse).filter(Boolean))] : [];
+      return { terms: plan.terms.map(term => term.map(normalizeCourse)), filters: plan.filters || {}, customCourses, completedCourses };
     } catch { return null; }
   }
 
@@ -97,7 +138,7 @@
     return terms;
   }
 
-  const api = { emptyTerms, normalizeCourse, courseLabel, courseDetails, findCourseSuggestions, placeCourse, readPlan, recommendedTerms };
+  const api = { emptyTerms, normalizeCourse, courseLabel, courseDetails, findCourseSuggestions, checkPrerequisites, placeCourse, readPlan, recommendedTerms };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.MathRoadmapState = api;
 })(globalThis);

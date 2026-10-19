@@ -36,6 +36,7 @@ test('the JavaScript-enabled notice is restricted to the actual noscript fallbac
   assert.doesNotMatch(normalMarkup, /needs JavaScript/);
   assert.match(html, /<noscript>[\s\S]*?needs JavaScript enabled[\s\S]*?<\/noscript>/);
   const scripts = [...html.matchAll(/<script src="(roadmap[^"?]+)(\?[^\"]+)" defer>/g)];
-  assert.equal(scripts.length, 2);
+  assert.equal(scripts.length, 3);
+  assert.ok(scripts.every(script => script[2] === scripts[0][2]));
   assert.equal(scripts[0][2], scripts[1][2]);
 });

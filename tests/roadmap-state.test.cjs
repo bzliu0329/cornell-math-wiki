@@ -59,7 +59,7 @@ test('saved plans retain custom nodes and reject corrupt or unbounded data', () 
   const terms = emptyTerms();
   terms[2].push('9999');
   const raw = JSON.stringify({ version: 1, terms, filters: { concentration: 'cs' } });
-  assert.deepEqual(readPlan(raw), { terms, filters: { concentration: 'cs' }, customCourses: [] });
+  assert.deepEqual(readPlan(raw), { terms, filters: { concentration: 'cs' }, customCourses: [], completedCourses: [] });
   for (const invalid of ['bad json', 'null', '{}', JSON.stringify({version:1, terms:[['4710']]})]) {
     assert.equal(readPlan(invalid), null);
   }

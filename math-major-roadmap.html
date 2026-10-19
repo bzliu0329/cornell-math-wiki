@@ -4,7 +4,7 @@
 #math-wiki .mw-logo {display:block;width:90px;height:auto;flex:0 0 90px;}
 @media(max-width:1200px){#math-wiki .mw-brand{align-self:flex-start;}}
 @media(max-width:600px){#math-wiki .mw-logo{width:70px;flex-basis:70px;}#math-wiki .mw-brand{font-size:23px;}}
-</style><link rel="stylesheet" href="roadmap.css?v=20261019-sample-1">
+</style><link rel="stylesheet" href="roadmap.css?v=20261019-prereq-1">
 <script id="roadmap-startup-check">
 document.addEventListener("DOMContentLoaded", function () {
   var editor = document.getElementById("roadmap-editor");
@@ -12,13 +12,14 @@ document.addEventListener("DOMContentLoaded", function () {
   var fallback = document.getElementById("roadmap-fallback");
   fallback.textContent = "The course map could not be loaded. ";
   var retry = document.createElement("a");
-  retry.href = "math-major-roadmap.html?preview=20261019-sample-1";
+  retry.href = "math-major-roadmap.html?preview=20261019-prereq-1";
   retry.textContent = "Reload the roadmap";
   fallback.appendChild(retry);
 });
 </script>
-<script src="roadmap-state.js?v=20261019-sample-1" defer></script>
-<script src="roadmap.js?v=20261019-sample-1" defer></script>
+<script src="roadmap-state.js?v=20261019-prereq-1" defer></script>
+<script src="roadmap-prerequisites.js?v=20261019-prereq-1" defer></script>
+<script src="roadmap.js?v=20261019-prereq-1" defer></script>
 </head><body><style>
 #math-wiki {font:400 16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#111;background:#fdfdfd;min-height:70vh;}
 #math-wiki * {box-sizing:border-box;}
@@ -111,6 +112,17 @@ document.addEventListener("DOMContentLoaded", function () {
           <h2 id="roadmap-board-heading">Your course map</h2>
           <div class="roadmap-board-tools"><button id="roadmap-undo" class="roadmap-undo" type="button" hidden>Undo roadmap</button><span id="roadmap-save-status" class="roadmap-save-status"></span></div>
         </div>
+        <details class="roadmap-prior-courses">
+          <summary>Prior coursework or transfer credit</summary>
+          <form id="roadmap-completed-form" novalidate>
+            <label for="roadmap-completed-courses">Courses completed or credited before Year 1</label>
+            <textarea id="roadmap-completed-courses" rows="2" autocomplete="off" aria-describedby="roadmap-completed-help roadmap-completed-error" placeholder="MATH 1110, MATH 1120, CS 1110"></textarea>
+            <p id="roadmap-completed-help">Separate course codes with commas or new lines. For AP, transfer, or equivalent credit, enter the Cornell course it satisfies. These courses count in every semester.</p>
+            <p id="roadmap-completed-error" class="roadmap-node-error" hidden></p>
+            <button type="submit">Save prior coursework</button>
+          </form>
+        </details>
+        <p id="roadmap-prerequisite-summary" class="roadmap-prerequisite-summary" role="status" aria-live="polite"></p>
         <div class="roadmap-selection"><p id="roadmap-selection"></p><button id="roadmap-cancel" type="button" class="roadmap-cancel" hidden>Cancel selection</button></div>
         <div id="roadmap-years" class="roadmap-years"></div>
       </section>
@@ -118,6 +130,6 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
   <p id="roadmap-status" class="roadmap-sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
   <aside class="roadmap-note">
-    <p>The sample roadmap is an editable starting point, with empty nodes left for your other choices. It does not check your individual prerequisites, semester offerings, or degree requirements. Review your plan with an advisor.</p>
+    <p>The sample roadmap is an editable starting point, with empty nodes left for your other choices. Prerequisite warnings use listed course requirements and your prior coursework. Check grades, instructor permission, and equivalencies in course details. Semester offerings and degree requirements still need a separate check. Review your plan with an advisor.</p>
   </aside>
 </main></div><footer style="border-top:1px solid #e8e8e8;padding:30px;color:#828282;font:15px/1.5 Arial,sans-serif"><div style="max-width:740px;margin:auto">Cornell Math Wiki<br>Courses and resources for the Cornell math community.</div><p style="margin:16px 0 0;text-align:center;font-size:14px;line-height:1.5;">Created and maintained by Undergraduate Math Club at Cornell</p></footer></body></html>
